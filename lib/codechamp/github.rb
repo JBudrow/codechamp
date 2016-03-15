@@ -5,7 +5,8 @@ module CodeChamp
 
     def initialize
       @headers = {
-        "Authorization" => "token #{ENV["OAUTH_TOKEN"]}",
+        # "Authorization" => "token #{ENV["OAUTH_TOKEN"]}",
+        "Authorization" => @token,
         "User-Agent"    => "HTTParty"
       }
     end
@@ -23,23 +24,20 @@ module CodeChamp
     end
 
     def get_contributors_list(owner,repo)
-      printf "%-20s %-20s %-20s%s\n", "Username","Additions","Deletions","Changes"
-
+      # printf "%-20s %-20s %-20s%s\n", "Username","Additions","Deletions","Commits"
       response = Github.get("/repos/#{owner}/#{repo}/stats/contributors", headers: @headers)
+        response.each do |user|
+          user_name = user["author"]["login"]
+          result = Hash.new(0)
 
-      response.each do |user|
-        user_name = user['author']['login']
-        result = Hash.new(0)
-
-        user['weeks'].each do |hash|
-          hash.each do |key, value|
+        user["weeks"].each do |hash|
+            hash.each do |key, value|
             result[key] += value.to_i
           end
         end
-        printf "%-20s %-20s %-20s %s\n", user_name,result["a"],result["d"],result["c"]
+        # printf "%-20s %-20s %-20s %s\n", user_name,result["a"],result["d"],result["c"]
       end
-
-
     end
+
   end
 end
