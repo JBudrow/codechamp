@@ -8,7 +8,6 @@ module CodeChamp
   class Application
     def initialize
       @github = Github.new
-      # @contributor = [name,additions,deletions]
     end
 
     def prompt(message, regex)
@@ -22,30 +21,28 @@ module CodeChamp
       input
     end
 
-    def confirmation?(message)
-      puts message
-      response = prompt("Are you sure?", /^[yn]$/)
-      answer == "y"
-    end
+    # def fetch_another?(message)
+    #   puts message
+    #   response = prompt("Fetch another?[y/n]: ", /^[yn]$/)
+    #   answer == "y"
+    # end
 
-    def aquire_contributors
-      user_cred = prompt("Enter your OAUTH token: ",
-                                /^[a-z0-9]{40}$/)
-      org_name = prompt("Enter owner: ",
+    def acquire_contributors
+
+      owner_name = prompt("Enter owner: ",
                                 /^[a-z0-9\-]{4,30}$/i)
       repo_name = prompt("Enter respository: ",
                                 /^[a-z0-9\-]{4,30}$/i)
-
-      binding.pry
-
-      printf "%-20s %-20s %-20s%s\n", "Username","Additions","Deletions","Commits"
-      statistics = @github.get_contributors_list(org_name,repo_name)
-      statistics.sort_by {|user| user["author"]["login"]}
-      printf "%-20s %-20s %-20s %s\n", user_name,result["a"],result["d"],result["c"]
-      # printf "%-20s %-20s %-20s %s\n", user_name,result["a"],result["d"],result["c"]
+      users = @github.get_contributors_list(owner_name,repo_name)
+      users.each do |user|
+      printf "%-20s %-20s %-20s %s\n", user[0], user[1]['a'], user[1]['d'], user[1]['c']
+     end
+    #  until fetch_another?(message)
+    #    acquire_contributors
+    #  end
     end
   end
 end
 
 stats = CodeChamp::Application.new
-stats.aquire_contributors
+stats.acquire_contributors
