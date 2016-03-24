@@ -5,10 +5,6 @@ module CodeChamp
     include HTTParty
     base_uri "https://api.github.com"
     def initialize(oauth_token)
-      # puts "Enter your OAUTH token: "
-      # # /^[a-z0-9]{40}$/)
-      # token = gets.chomp
-      # @oauth_token = token
       @headers = {
         "Authorization" => "token #{oauth_token}",
         "User-Agent"    => "HTTParty"
@@ -31,7 +27,6 @@ module CodeChamp
       response = Github.get("/repos/#{owner}/#{repo}/stats/contributors", headers: @headers)
       all_users = []
       response.each do |user|
-        # binding.pry
         name = user["author"]["login"]
         totals = Hash.new(0)
         user["weeks"].each do |week|
